@@ -1,73 +1,12 @@
-# ==============================================================================
-# DISCIPLINE APP — CODEMAGIC CI/CD CONFIGURATION
-# ==============================================================================
-# This configuration builds an Android Debug APK for direct testing on devices
-# and an Android Release APK / Bundle without requiring Android Studio locally.
-#
-# Primary target: app/build/outputs/apk/debug/app-debug.apk
-# ==============================================================================
-
 workflows:
-  discipline-debug-apk:
-    name: Build Discipline Debug APK
+  android-apk-build:
+    name: Build Android APK
     max_build_duration: 30
-    instance_type: linux_x2
-    environment:
-      java: 17
-      vars:
-        SUPABASE_URL: ""
-        SUPABASE_ANON_KEY: ""
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: 'main'
-          include: true
-        - pattern: 'master'
-          include: true
+    instance_type: mac_mini_m1
     scripts:
-      - name: Make Gradle wrapper executable
-        script: chmod +x gradlew
-      - name: Inject Supabase build configuration (if set in CodeMagic variables)
+      - name: Set up local.properties
         script: |
-          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
-            echo "SUPABASE_URL=$SUPABASE_URL" >> gradle.properties
-            echo "SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY" >> gradle.properties
-          fi
-      - name: Run unit test suite
-        script: ./gradlew testDebugUnitTest --no-daemon --stacktrace
-      - name: Build Debug APK
-        script: ./gradlew assembleDebug --no-daemon --stacktrace
-    artifacts:
-      - app/build/outputs/apk/**/*.apk
-      - app/build/reports/tests/testDebugUnitTest/**
-    publishing:
-      email:
-        recipients: []
-        notify:
-          failure: true
-          success: false
-
-  discipline-release-apk:
-    name: Build Discipline Release APK
-    max_build_duration: 30
-    instance_type: linux_x2
-    environment:
-      java: 17
-      vars:
-        SUPABASE_URL: ""
-        SUPABASE_ANON_KEY: ""
-    scripts:
-      - name: Make Gradle wrapper executable
-        script: chmod +x gradlew
-      - name: Build Release APK
-        script: ./gradlew assembleRelease --no-daemon --stacktrace
-    artifacts:
-      - app/build/outputs/apk/**/*.apk
-      - app/build/outputs/bundle/**/*.aab
-    publishing:
-      email:
-        recipients: []
-        notify:
-          failure: true
-          success: false
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+      - name: Build Android APK
+        script: |
+          gradle assembleDebug

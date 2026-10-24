@@ -9,13 +9,11 @@ data class DailyScore(
 ) {
     val isCompleteDay: Boolean
         get() = score != null && score >= 100f
-
     val isSuccessfulDay: Boolean
-        fun isSuccessful(threshold: Int = 80): Boolean = score != null && score >= threshold
-
+        get() = score != null && score >= 80f
+    fun isSuccessful(threshold: Int = 80): Boolean = score != null && score >= threshold
     val formattedPercent: String
         get() = if (score != null) "${score.toInt()}%" else "N/A"
-
     val fractionText: String
         get() = "$completedCount / $scheduledCount completed"
 }

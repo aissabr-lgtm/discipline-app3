@@ -1,0 +1,27 @@
+<resources>
+    <!-- Light Palette -->
+    <color name="light_background">#F8FAFC</color>
+    <color name="light_card">#FFFFFF</color>
+    <color name="light_primary">#059669</color>
+    <color name="light_text_main">#0F172A</color>
+    <color name="light_text_secondary">#64748B</color>
+    <color name="light_border">#E2E8F0</color>
+
+    <!-- Dark Palette -->
+    <color name="dark_background">#0F172A</color>
+    <color name="dark_card">#1E293B</color>
+    <color name="dark_primary">#10B981</color>
+    <color name="dark_text_main">#F8FAFC</color>
+    <color name="dark_text_secondary">#94A3B8</color>
+    <color name="dark_border">#334155</color>
+
+    <!-- Daily Score Performance Colors (Invariant across themes) -->
+    <color name="score_100">#064E3B</color>
+    <color name="score_80_99">#10B981</color>
+    <color name="score_60_79">#84CC16</color>
+    <color name="score_40_59">#F59E0B</color>
+    <color name="score_20_39">#F97316</color>
+    <color name="score_1_19">#EF4444</color>
+    <color name="score_0">#7F1D1D</color>
+    <color name="score_none">#6B7280</color>
+</resources>

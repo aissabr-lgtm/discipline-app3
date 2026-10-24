@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Discipline</string>
+    <string name="tagline">See your discipline, not just your habits.</string>
+    <string name="nav_today">Today</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_statistics">Statistics</string>
+    <string name="nav_settings">Settings</string>
+    <string name="notification_channel_name">Habit Reminders</string>
+    <string name="notification_channel_desc">Daily reminders for your scheduled habits</string>
+</resources>

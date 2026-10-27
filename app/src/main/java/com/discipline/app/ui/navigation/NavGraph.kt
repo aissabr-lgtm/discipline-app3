@@ -35,6 +35,7 @@ import com.discipline.app.ui.screens.statistics.StatisticsScreen
 import com.discipline.app.ui.screens.statistics.StatisticsViewModel
 import com.discipline.app.ui.screens.today.TodayScreen
 import com.discipline.app.ui.screens.today.TodayViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun DisciplineNavGraph(

@@ -1,3 +1,4 @@
+
 package com.discipline.app.data.local.dao
 
 import androidx.room.Dao
@@ -17,10 +18,18 @@ interface HabitLogDao {
     suspend fun getLogsForDate(ownerUid: String, date: String): List<HabitLogEntity>
 
     @Query("SELECT * FROM habit_logs WHERE ownerUid = :ownerUid AND date BETWEEN :startDate AND :endDate")
-    suspend fun getLogsForDateRange(ownerUid: String, startDate: String, endDate: String): List<HabitLogEntity>
+    suspend fun getLogsForDateRange(
+        ownerUid: String,
+        startDate: String,
+        endDate: String
+    ): List<HabitLogEntity>
 
     @Query("SELECT * FROM habit_logs WHERE ownerUid = :ownerUid AND date BETWEEN :startDate AND :endDate")
-    fun observeLogsForDateRange(ownerUid: String, startDate: String, endDate: String): Flow<List<HabitLogEntity>>
+    fun observeLogsForDateRange(
+        ownerUid: String,
+        startDate: String,
+        endDate: String
+    ): Flow<List<HabitLogEntity>>
 
     @Query("SELECT * FROM habit_logs WHERE habitId = :habitId")
     suspend fun getLogsForHabit(habitId: String): List<HabitLogEntity>
@@ -33,6 +42,9 @@ interface HabitLogDao {
 
     @Query("SELECT * FROM habit_logs WHERE ownerUid = :ownerUid")
     suspend fun getAllLogs(ownerUid: String): List<HabitLogEntity>
+
+    @Query("SELECT COUNT(*) FROM habit_logs WHERE ownerUid = :ownerUid AND isCompleted = 1")
+    suspend fun getCompletedLogCount(ownerUid: String): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertLog(log: HabitLogEntity)

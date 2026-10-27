@@ -1,3 +1,4 @@
+
 package com.discipline.app.ui.navigation
 
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -35,7 +37,6 @@ import com.discipline.app.ui.screens.statistics.StatisticsScreen
 import com.discipline.app.ui.screens.statistics.StatisticsViewModel
 import com.discipline.app.ui.screens.today.TodayScreen
 import com.discipline.app.ui.screens.today.TodayViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun DisciplineNavGraph(
@@ -59,11 +60,14 @@ fun DisciplineNavGraph(
                 ) {
                     bottomNavScreens.forEach { screen ->
                         val isSelected = currentRoute == screen.route
+
                         NavigationBarItem(
                             selected = isSelected,
                             onClick = {
                                 navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
+                                    popUpTo(
+                                        navController.graph.findStartDestination().id
+                                    ) {
                                         saveState = true
                                     }
                                     launchSingleTop = true
@@ -72,7 +76,10 @@ fun DisciplineNavGraph(
                             },
                             icon = {
                                 if (screen.icon != null) {
-                                    Icon(imageVector = screen.icon, contentDescription = screen.title)
+                                    Icon(
+                                        imageVector = screen.icon,
+                                        contentDescription = screen.title
+                                    )
                                 }
                             },
                             label = { Text(screen.title) },
@@ -92,18 +99,22 @@ fun DisciplineNavGraph(
             startDestination = startDestination,
             modifier = Modifier.padding(paddingValues)
         ) {
-            // Onboarding
             composable(Screen.Onboarding.route) {
-                val vm = OnboardingViewModel(
-                    app.preferencesRepository,
-                    app.habitRepository,
-                    app.authRepository
-                )
+                val vm = viewModel {
+                    OnboardingViewModel(
+                        app.preferencesRepository,
+                        app.habitRepository,
+                        app.authRepository
+                    )
+                }
+
                 OnboardingScreen(
                     viewModel = vm,
                     onFinishOnboarding = {
                         navController.navigate(Screen.Today.route) {
-                            popUpTo(Screen.Onboarding.route) { inclusive = true }
+                            popUpTo(Screen.Onboarding.route) {
+                                inclusive = true
+                            }
                         }
                     },
                     onNavigateToAuth = {
@@ -112,9 +123,11 @@ fun DisciplineNavGraph(
                 )
             }
 
-            // Auth
             composable(Screen.Auth.route) {
-                val vm = AuthViewModel(app.authRepository)
+                val vm = viewModel {
+                    AuthViewModel(app.authRepository)
+                }
+
                 AuthScreen(
                     viewModel = vm,
                     onAuthSuccess = {
@@ -126,48 +139,74 @@ fun DisciplineNavGraph(
                 )
             }
 
-            // Bottom Nav 1: Today
             composable(Screen.Today.route) {
-                val vm = TodayViewModel(app.habitRepository, app.authRepository)
+                val vm = viewModel {
+                    TodayViewModel(
+                        app.habitRepository,
+                        app.authRepository
+                    )
+                }
+
                 TodayScreen(
                     viewModel = vm,
                     onNavigateToCreateHabit = {
-                        navController.navigate(Screen.HabitForm.createRoute())
+                        navController.navigate(
+                            Screen.HabitForm.createRoute()
+                        )
                     },
                     onNavigateToEditHabit = { habitId ->
-                        navController.navigate(Screen.HabitForm.createRoute(habitId))
+                        navController.navigate(
+                            Screen.HabitForm.createRoute(habitId)
+                        )
                     },
                     onNavigateToReflection = { date ->
-                        navController.navigate(Screen.DayDetails.createRoute(date))
+                        navController.navigate(
+                            Screen.DayDetails.createRoute(date)
+                        )
                     }
                 )
             }
 
-            // Bottom Nav 2: Calendar
             composable(Screen.Calendar.route) {
-                val vm = CalendarViewModel(app.habitRepository, app.authRepository)
+                val vm = viewModel {
+                    CalendarViewModel(
+                        app.habitRepository,
+                        app.authRepository
+                    )
+                }
+
                 CalendarScreen(
                     viewModel = vm,
                     onDateSelected = { date ->
-                        navController.navigate(Screen.DayDetails.createRoute(date))
+                        navController.navigate(
+                            Screen.DayDetails.createRoute(date)
+                        )
                     }
                 )
             }
 
-            // Bottom Nav 3: Statistics
             composable(Screen.Statistics.route) {
-                val vm = StatisticsViewModel(app.habitRepository, app.authRepository, app.preferencesRepository)
+                val vm = viewModel {
+                    StatisticsViewModel(
+                        app.habitRepository,
+                        app.authRepository,
+                        app.preferencesRepository
+                    )
+                }
+
                 StatisticsScreen(viewModel = vm)
             }
 
-            // Bottom Nav 4: Settings
             composable(Screen.Settings.route) {
-                val vm = SettingsViewModel(
-                    app.preferencesRepository,
-                    app.authRepository,
-                    app.exportImportRepository,
-                    app.supabaseService
-                )
+                val vm = viewModel {
+                    SettingsViewModel(
+                        app.preferencesRepository,
+                        app.authRepository,
+                        app.exportImportRepository,
+                        app.supabaseService
+                    )
+                }
+
                 SettingsScreen(
                     viewModel = vm,
                     onNavigateToAuth = {
@@ -176,38 +215,64 @@ fun DisciplineNavGraph(
                 )
             }
 
-            // Habit Form (Create / Edit)
             composable(
                 route = Screen.HabitForm.route,
-                arguments = listOf(navArgument("habitId") {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = null
-                })
-            ) { backStackEntry ->
-                val habitId = backStackEntry.arguments?.getString("habitId")
-                val vm = HabitFormViewModel(
-                    app.habitRepository,
-                    app.authRepository,
-                    app.notificationScheduler,
-                    habitId
+                arguments = listOf(
+                    navArgument("habitId") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
                 )
+            ) { backStackEntry ->
+                val habitId =
+                    backStackEntry.arguments?.getString("habitId")
+
+                val vm = viewModel(
+                    key = "HabitForm_${habitId ?: "new"}"
+                ) {
+                    HabitFormViewModel(
+                        app.habitRepository,
+                        app.authRepository,
+                        app.notificationScheduler,
+                        habitId
+                    )
+                }
+
                 HabitFormScreen(
                     viewModel = vm,
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
                 )
             }
 
-            // Day Details
             composable(
                 route = Screen.DayDetails.route,
-                arguments = listOf(navArgument("date") { type = NavType.StringType })
+                arguments = listOf(
+                    navArgument("date") {
+                        type = NavType.StringType
+                    }
+                )
             ) { backStackEntry ->
-                val date = backStackEntry.arguments?.getString("date") ?: ""
-                val vm = DayDetailsViewModel(app.habitRepository, app.authRepository, date)
+                val date =
+                    backStackEntry.arguments?.getString("date") ?: ""
+
+                val vm = viewModel(
+                    key = "DayDetails_$date"
+                ) {
+                    DayDetailsViewModel(
+                        app.habitRepository,
+                        app.authRepository,
+                        date
+                    )
+                }
+
                 DayDetailsScreen(
                     viewModel = vm,
-                    onNavigateBack = { navController.popBackStack() }
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
                 )
             }
         }
